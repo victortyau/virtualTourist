@@ -56,6 +56,8 @@
 		D104B46D2726744D0038F720 /* virtualTourist */ = {
 			isa = PBXGroup;
 			children = (
+				D15B8B3E2727A3A30035CA0C /* Model */,
+				D15B8B3D2727A3950035CA0C /* Controller */,
 				D104B46E2726744D0038F720 /* AppDelegate.swift */,
 				D104B4702726744D0038F720 /* SceneDelegate.swift */,
 				D104B4722726744D0038F720 /* ViewController.swift */,
@@ -65,6 +67,20 @@
 				D104B47C2726744F0038F720 /* Info.plist */,
 			);
 			path = virtualTourist;
+			sourceTree = "<group>";
+		};
+		D15B8B3D2727A3950035CA0C /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
+		D15B8B3E2727A3A30035CA0C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -306,7 +322,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -334,7 +350,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

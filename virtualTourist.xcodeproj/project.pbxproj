@@ -13,6 +13,7 @@
 		D104B4762726744D0038F720 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D104B4742726744D0038F720 /* Main.storyboard */; };
 		D104B4782726744F0038F720 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D104B4772726744F0038F720 /* Assets.xcassets */; };
 		D104B47B2726744F0038F720 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D104B4792726744F0038F720 /* LaunchScreen.storyboard */; };
+		D1D23F2B272920FE00FFC745 /* virtual_tourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1D23F29272920FE00FFC745 /* virtual_tourist.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		D104B4772726744F0038F720 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D104B47A2726744F0038F720 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D104B47C2726744F0038F720 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D1D23F2A272920FE00FFC745 /* virtual_tourist.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = virtual_tourist.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 				D104B4772726744F0038F720 /* Assets.xcassets */,
 				D104B4792726744F0038F720 /* LaunchScreen.storyboard */,
 				D104B47C2726744F0038F720 /* Info.plist */,
+				D1D23F29272920FE00FFC745 /* virtual_tourist.xcdatamodeld */,
 			);
 			path = virtualTourist;
 			sourceTree = "<group>";
@@ -154,6 +157,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1D23F2B272920FE00FFC745 /* virtual_tourist.xcdatamodeld in Sources */,
 				D104B4732726744D0038F720 /* ViewController.swift in Sources */,
 				D104B46F2726744D0038F720 /* AppDelegate.swift in Sources */,
 				D104B4712726744D0038F720 /* SceneDelegate.swift in Sources */,
@@ -376,6 +380,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		D1D23F29272920FE00FFC745 /* virtual_tourist.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				D1D23F2A272920FE00FFC745 /* virtual_tourist.xcdatamodel */,
+			);
+			currentVersion = D1D23F2A272920FE00FFC745 /* virtual_tourist.xcdatamodel */;
+			path = virtual_tourist.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = D104B4632726744D0038F720 /* Project object */;
 }

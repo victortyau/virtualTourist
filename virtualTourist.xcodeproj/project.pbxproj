@@ -71,7 +71,6 @@
 				D104B4772726744F0038F720 /* Assets.xcassets */,
 				D104B4792726744F0038F720 /* LaunchScreen.storyboard */,
 				D104B47C2726744F0038F720 /* Info.plist */,
-				D1D23F29272920FE00FFC745 /* virtual_tourist.xcdatamodeld */,
 			);
 			path = virtualTourist;
 			sourceTree = "<group>";
@@ -88,6 +87,7 @@
 		D15B8B3E2727A3A30035CA0C /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				D1D23F29272920FE00FFC745 /* virtual_tourist.xcdatamodeld */,
 			);
 			path = Model;
 			sourceTree = "<group>";

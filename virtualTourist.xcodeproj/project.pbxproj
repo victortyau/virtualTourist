@@ -16,6 +16,8 @@
 		D1470929272ACD3200BEAD12 /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1470928272ACD3200BEAD12 /* PhotoViewController.swift */; };
 		D1D23F2B272920FE00FFC745 /* virtual_tourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D1D23F29272920FE00FFC745 /* virtual_tourist.xcdatamodeld */; };
 		D1FAED38272DD22100AE2381 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FAED37272DD22100AE2381 /* DataController.swift */; };
+		D1FAED3F272E5FBE00AE2381 /* ServiceClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FAED3E272E5FBE00AE2381 /* ServiceClient.swift */; };
+		D1FAED41272E5FEB00AE2381 /* NetworkHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1FAED40272E5FEB00AE2381 /* NetworkHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		D1470928272ACD3200BEAD12 /* PhotoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
 		D1D23F2A272920FE00FFC745 /* virtual_tourist.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = virtual_tourist.xcdatamodel; sourceTree = "<group>"; };
 		D1FAED37272DD22100AE2381 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		D1FAED3E272E5FBE00AE2381 /* ServiceClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceClient.swift; sourceTree = "<group>"; };
+		D1FAED40272E5FEB00AE2381 /* NetworkHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,7 @@
 		D104B46D2726744D0038F720 /* virtualTourist */ = {
 			isa = PBXGroup;
 			children = (
+				D1FAED3D272E5F7F00AE2381 /* Network */,
 				D15B8B3E2727A3A30035CA0C /* Model */,
 				D15B8B3D2727A3950035CA0C /* Controller */,
 				D104B46E2726744D0038F720 /* AppDelegate.swift */,
@@ -90,6 +95,15 @@
 				D1FAED37272DD22100AE2381 /* DataController.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		D1FAED3D272E5F7F00AE2381 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				D1FAED3E272E5FBE00AE2381 /* ServiceClient.swift */,
+				D1FAED40272E5FEB00AE2381 /* NetworkHelper.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -163,6 +177,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1FAED41272E5FEB00AE2381 /* NetworkHelper.swift in Sources */,
+				D1FAED3F272E5FBE00AE2381 /* ServiceClient.swift in Sources */,
 				D1D23F2B272920FE00FFC745 /* virtual_tourist.xcdatamodeld in Sources */,
 				D1FAED38272DD22100AE2381 /* DataController.swift in Sources */,
 				D104B46F2726744D0038F720 /* AppDelegate.swift in Sources */,

@@ -7,75 +7,77 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class MapViewController: UIViewController {
 
     var EditPin: Bool = false
     var gestureStart: Bool = false
     var storedPins: [Pin] = []
+    var dataController: DataController!
     
     @IBOutlet weak var mapView: MKMapView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        mapView.delegate = self
+        getDataController()
+        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
+        if let result = try? dataController.viewContext.fetch(fetchRequest) {
+            storedPins = result
+            displayPins()
+        }
     }
     
+    func displayPins() {
+        for pin:Pin in storedPins {
+            let coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+            addPinToMap(coordinate: coordinate)
+        }
+    }
     
+    func getDataController() {
+        dataController = DataController(modelName: "virtual_tourist")
+        dataController.load()
+    }
+    
+    func addAnnotationToCoreData(coordinate: CLLocationCoordinate2D) {
+        let pin = Pin(context: dataController.viewContext)
+        pin.latitude = coordinate.latitude
+        pin.longitude = coordinate.longitude
+        try? dataController.viewContext.save()
+        storedPins.append(pin)
+    }
 }
 
 extension MapViewController:  MKMapViewDelegate {
     
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        let reuseId = "pin"
-        
-        var pinView = mapView.dequeueReusableAnnotationView(withIdentifier: reuseId) as? MKPinAnnotationView
-        if pinView == nil {
-            pinView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: reuseId)
-            pinView!.canShowCallout = true
-            pinView!.pinTintColor = .red
-            pinView!.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
-        } else {
-            pinView!.annotation = annotation
-        }
-        return pinView
-    }
-    
-    func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        if control == view.rightCalloutAccessoryView {
-            if let toOpen = view.annotation?.subtitle! {
-               print(toOpen)
-            }
-        }
-    }
-    
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-        print((view.annotation?.subtitle ?? "") ?? "")
+        let photoViewController = self.storyboard!.instantiateViewController(withIdentifier: "photoViewController") as! PhotoViewController
+        photoViewController.coordinate = view.annotation?.coordinate
+        self.navigationController!.pushViewController(photoViewController, animated: true)
     }
 }
 
 extension MapViewController: UIGestureRecognizerDelegate {
      
     @IBAction func responseLongTapAction(_ sender: Any){
-        print("padentro")
-        print(gestureStart)
         if gestureStart {
-            print("padentro 2")
             let gestureRecognizer = sender as! UILongPressGestureRecognizer
             let gestureTouchLocation = gestureRecognizer.location(in: mapView)
-            addPinToMap(point: gestureTouchLocation)
+            let coordinate = mapView.convert(gestureTouchLocation, toCoordinateFrom: mapView)
+            addPinToMap(coordinate: coordinate)
+            addAnnotationToCoreData(coordinate: coordinate)
             gestureStart = false
         }
     }
     
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        print("Tamos here")
         gestureStart = true
         return true
     }
-    
-    func addPinToMap(point: CGPoint) {
-        let coordinate = mapView.convert(point, toCoordinateFrom: mapView)
+
+    func addPinToMap(coordinate: CLLocationCoordinate2D) {
         let annotation = MKPointAnnotation()
         annotation.coordinate = coordinate
         mapView.addAnnotation(annotation)

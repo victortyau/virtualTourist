@@ -55,6 +55,7 @@ extension MapViewController:  MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         let photoViewController = self.storyboard!.instantiateViewController(withIdentifier: "photoViewController") as! PhotoViewController
         photoViewController.coordinate = view.annotation?.coordinate
+        photoViewController.dataController = dataController
         self.navigationController!.pushViewController(photoViewController, animated: true)
     }
 }

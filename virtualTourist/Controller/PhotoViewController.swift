@@ -15,14 +15,45 @@ class PhotoViewController: UIViewController {
     @IBOutlet weak var collectionButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    
     var coordinate: CLLocationCoordinate2D!
+    var dataController: DataController!
+    var photos:[Photo] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         showMapPin()
+        fetchData()
     }
     
     @IBAction func createNewCollection(_ sender: Any) {
+    }
+    
+    func fetchData() {
+        let pin = Pin(context: dataController.viewContext)
+        pin.latitude = coordinate.latitude
+        pin.longitude = coordinate.longitude
+        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
+        let predicate = NSPredicate(format: "pin == %@", pin)
+        fetchRequest.predicate = predicate
+        
+        if let result = try? dataController.viewContext.fetch(fetchRequest) {
+            photos = result
+        }
+        
+        if photos.count == 0 {
+            fetchDataApi()
+        }
+        
+    }
+    
+    func fetchDataApi() {
+        ServiceClient.searchPhoto(lat: String(format: "%f",coordinate.latitude), long: String(format: "%f",coordinate.longitude)) {
+            photos, error in
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
     }
 }
 
@@ -34,17 +65,3 @@ extension PhotoViewController:  MKMapViewDelegate {
         mapView.showAnnotations([annotation], animated: true)
     }
 }
-
-//extension PhotoViewController: UICollectionViewDelegate {
-//    
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 10
-//    }
-//
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoAlbumCollectionViewCell
-//        cell.initWithPhoto(savedImages[indexPath.row])
-//        return cell
-//    }
-//    
-//}

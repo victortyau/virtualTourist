@@ -9,16 +9,17 @@ import UIKit
 import MapKit
 import CoreData
 
-class PhotoViewController: UIViewController {
-
+class PhotoViewController: UIViewController, UICollectionViewDataSource {
+   
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var collectionButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     
-    
     var coordinate: CLLocationCoordinate2D!
     var dataController: DataController!
-    var photos:[Photo] = []
+    var photos:[Pic] = []
+    var apiPhotos:[Photo] = []
+    var imageCells: [UIImage] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +34,7 @@ class PhotoViewController: UIViewController {
         let pin = Pin(context: dataController.viewContext)
         pin.latitude = coordinate.latitude
         pin.longitude = coordinate.longitude
-        let fetchRequest:NSFetchRequest<Photo> = Photo.fetchRequest()
+        let fetchRequest:NSFetchRequest<Pic> = Pic.fetchRequest()
         let predicate = NSPredicate(format: "pin == %@", pin)
         fetchRequest.predicate = predicate
         
@@ -45,15 +46,34 @@ class PhotoViewController: UIViewController {
             fetchDataApi()
         }
         
+        print(apiPhotos.count)
     }
     
     func fetchDataApi() {
         ServiceClient.searchPhoto(lat: String(format: "%f",coordinate.latitude), long: String(format: "%f",coordinate.longitude)) {
             photos, error in
+            //self.apiPhotos = photos
             DispatchQueue.main.async {
+                self.apiPhotos = photos
+                for apiPhoto in self.apiPhotos {
+                    //print(apiPhoto.id)
+                    let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
+                    //print(url)
+                    let data = try? Data(contentsOf: url)
+                    print(data)
+                    self.imageCells.append(UIImage(data: data!)!)
+                }
+                print(self.imageCells[0])
+                self.fillingOutImageCells()
                 self.collectionView.reloadData()
+                self.fillingOutImageCells()
             }
         }
+    }
+    
+    func fillingOutImageCells(){
+       
+        collectionView.reloadData()
     }
 }
 
@@ -63,5 +83,19 @@ extension PhotoViewController:  MKMapViewDelegate {
         annotation.coordinate = coordinate
         mapView.addAnnotation(annotation)
         mapView.showAnnotations([annotation], animated: true)
+    }
+}
+
+extension PhotoViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return imageCells.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "grid_cell", for: indexPath) as! GridCellController
+        let photo = self.imageCells[(indexPath as NSIndexPath).row]
+        print(photo)
+        cell.villainImageView.image = photo
+        return cell
     }
 }

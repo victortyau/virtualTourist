@@ -10,8 +10,7 @@ import Foundation
 class NetworkHelper {
     
     class func taskForGETRequest<ResponseType: Decodable>(url: URL, responseType: ResponseType.Type, completion: @escaping (ResponseType?, Error?) -> Void){
-        
-        let task = URLSession.shared.dataTask(with: <#T##URLRequest#>) { data, response, error in
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data else {
                 DispatchQueue.main.async {
                     completion(nil, error)

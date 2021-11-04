@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GridCellController: UIViewController {
+class GridCellController: UICollectionViewCell {
     
     @IBOutlet weak var villainImageView: UIImageView!
 

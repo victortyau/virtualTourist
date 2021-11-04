@@ -10,7 +10,7 @@ import Foundation
 class ServiceClient {
     
     enum Endpoints {
-        static let baseUrl = "https://api.flickr.com/services/rest/"
+        static let baseUrl = "https://www.flickr.com/services/rest/"
         static let apiKey = "e2bdf455f99ac7216300a9cdaad57479"
         static let secretKey = "1296074b77ac4aba"
         
@@ -18,7 +18,7 @@ class ServiceClient {
         
         var stringValue: String {
             switch self {
-            case .searchPhotos(let lat, let long): return Endpoints.baseUrl + "?method=flickr.photos.search&format=json&api_key=\(Endpoints.apiKey)&radius=10&lat=\(lat)&lon=\(long)"
+            case .searchPhotos(let lat, let long): return Endpoints.baseUrl + "?method=flickr.photos.search&format=json&api_key=\(Endpoints.apiKey)&radius=10&lat=\(lat)&lon=\(long)&nojsoncallback=1&per_page=50"
             }
         }
         
@@ -27,11 +27,16 @@ class ServiceClient {
         }
     }
     
-    class func searchPhoto(lat: String, long: String, completion: @escaping ([Photos], Error?) -> Void) {
-        NetworkHelper.taskForGETRequest(url: Endpoints.searchPhotos(lat, long).url, responseType: FlickrImage.self) {
+    class func searchPhoto(lat: String, long: String, completion: @escaping ([Photo], Error?) -> Void) {
+        NetworkHelper.taskForGETRequest(url: Endpoints.searchPhotos(lat, long).url, responseType: Welcome.self) {
             response, error in
+            
+            if error != nil {
+                print(error?.localizedDescription ?? "")
+            }
+            
             if let response = response {
-                completion(response.photo, nil)
+                completion(response.photos.photo, nil)
             } else {
                 completion([], nil)
             }

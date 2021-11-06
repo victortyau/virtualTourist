@@ -3,7 +3,7 @@
 //  virtualTourist
 //
 //  Created by Victor Tejada Yau on 10/31/21.
-// https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=e2bdf455f99ac7216300a9cdaad57479&lat=12.58472&lon=-81.70056&radius=10&format=json&nojsoncallback=1
+//
 
 import Foundation
 

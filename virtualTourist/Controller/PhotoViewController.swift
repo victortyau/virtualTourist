@@ -57,27 +57,20 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     func fetchDataApi() {
         ServiceClient.searchPhoto(lat: String(format: "%f",coordinate.latitude), long: String(format: "%f",coordinate.longitude)) {
             photos, error in
-            //self.apiPhotos = photos
+            
             DispatchQueue.main.async {
                 self.apiPhotos = photos
-                for apiPhoto in self.apiPhotos {
-                    //print(apiPhoto.id)
-                    let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
-                    //print(url)
-                    let data = try? Data(contentsOf: url)
-                    print(data)
-                    self.imageCells.append(UIImage(data: data!)!)
-                }
-                print(self.imageCells[0])
                 self.fillingOutImageCells()
-                self.collectionView.reloadData()
-               
             }
         }
     }
     
     func fillingOutImageCells(){
-       
+        for apiPhoto in apiPhotos {
+            let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
+            let data = try? Data(contentsOf: url)
+            self.imageCells.append(UIImage(data: data!)!)
+        }
         collectionView.reloadData()
     }
 }

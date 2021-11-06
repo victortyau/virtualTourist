@@ -27,6 +27,11 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         fetchData()
     }
     
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        collectionView.reloadData()
+//    }
+    
     @IBAction func createNewCollection(_ sender: Any) {
     }
     
@@ -66,7 +71,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
                 print(self.imageCells[0])
                 self.fillingOutImageCells()
                 self.collectionView.reloadData()
-                self.fillingOutImageCells()
+               
             }
         }
     }
@@ -94,7 +99,6 @@ extension PhotoViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "grid_cell", for: indexPath) as! GridCellController
         let photo = self.imageCells[(indexPath as NSIndexPath).row]
-        print(photo)
         cell.villainImageView.image = photo
         return cell
     }

@@ -33,6 +33,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
 //    }
     
     @IBAction func createNewCollection(_ sender: Any) {
+        
     }
     
     func fetchData() {

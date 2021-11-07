@@ -55,8 +55,6 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         if photos.count == 0 {
             fetchDataApi()
         }
-        
-        print(apiPhotos.count)
     }
     
     func fetchDataApi() {

@@ -15,6 +15,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     @IBOutlet weak var collectionButton: UIButton!
     @IBOutlet weak var collectionView: UICollectionView!
     
+    var currentIndicator: UIActivityIndicatorView!
     var coordinate: CLLocationCoordinate2D!
     var dataController: DataController!
     var photos:[Pic] = []
@@ -23,15 +24,18 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        currentIndicator = UIActivityIndicatorView (style: UIActivityIndicatorView.Style.medium)
+        self.view.addSubview(currentIndicator)
+        currentIndicator.bringSubviewToFront(self.view)
+        currentIndicator.center = self.view.center
+        
+        collectionView.allowsMultipleSelection = true
+        collectionButton.isEnabled = false
         showMapPin()
         fetchData()
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        collectionView.reloadData()
-//    }
-    
+        
     @IBAction func createNewCollection(_ sender: Any) {
         
     }
@@ -58,7 +62,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     func fetchDataApi() {
         ServiceClient.searchPhoto(lat: String(format: "%f",coordinate.latitude), long: String(format: "%f",coordinate.longitude)) {
             photos, error in
-            
+            self.displayActivityIndicator(currentIndicator: self.currentIndicator)
             DispatchQueue.main.async {
                 self.apiPhotos = photos
                 self.fillingOutImageCells()
@@ -73,6 +77,18 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
             self.imageCells.append(UIImage(data: data!)!)
         }
         collectionView.reloadData()
+        self.hideActivityIndicator(currentIndicator: self.currentIndicator)
+        collectionButton.isEnabled = true
+    }
+    
+    func displayActivityIndicator(currentIndicator: UIActivityIndicatorView) {
+        currentIndicator.isHidden = false
+        currentIndicator.startAnimating()
+    }
+       
+    func hideActivityIndicator(currentIndicator: UIActivityIndicatorView) {
+        currentIndicator.stopAnimating()
+        currentIndicator.isHidden = true
     }
 }
 
@@ -95,5 +111,21 @@ extension PhotoViewController: UICollectionViewDelegate {
         let photo = self.imageCells[(indexPath as NSIndexPath).row]
         cell.villainImageView.image = photo
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        colorCell(cell: cell!, alpha: 0.5)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        let cell = collectionView.cellForItem(at: indexPath)
+        colorCell(cell: cell!, alpha: 1.0)
+    }
+    
+    func colorCell(cell: UICollectionViewCell, alpha: Double){
+        DispatchQueue.main.async {
+            cell.contentView.alpha = alpha
+        }
     }
 }

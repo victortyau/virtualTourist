@@ -21,6 +21,8 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     var photos:[Pic] = []
     var apiPhotos:[Photo] = []
     var imageCells: [UIImage] = []
+    var pin: Pin!
+    var pic: Pic!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,27 +35,38 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         collectionView.allowsMultipleSelection = true
         collectionButton.isEnabled = false
         showMapPin()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
         fetchData()
     }
         
     @IBAction func createNewCollection(_ sender: Any) {
-        
+        createCollection()
     }
     
     func fetchData() {
-        let pin = Pin(context: dataController.viewContext)
-        pin.latitude = coordinate.latitude
-        pin.longitude = coordinate.longitude
-        let fetchRequest:NSFetchRequest<Pic> = Pic.fetchRequest()
-        let predicate = NSPredicate(format: "pin == %@", pin)
+        
+        let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
+        let predicate = NSPredicate(format: "latitude = %@ && longitude = %@ ", argumentArray: [coordinate.latitude, coordinate.longitude])
         fetchRequest.predicate = predicate
         
         if let result = try? dataController.viewContext.fetch(fetchRequest) {
+            pin = result.first
+        }
+        
+        let fetchRequest1:NSFetchRequest<Pic> = Pic.fetchRequest()
+        let predicate1 = NSPredicate(format: "pin == %@", pin)
+        fetchRequest1.predicate = predicate1
+
+        if let result = try? dataController.viewContext.fetch(fetchRequest1) {
             photos = result
         }
         
         if photos.count == 0 {
             fetchDataApi()
+        } else {
+            fetchAlbumData()
         }
     }
     
@@ -68,6 +81,16 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         }
     }
     
+    func fetchAlbumData() {
+        self.displayActivityIndicator(currentIndicator: self.currentIndicator)
+        for photo in photos {
+            let data = try? Data(contentsOf: photo.url!)
+            self.imageCells.append(UIImage(data: data!)!)
+        }
+        collectionView.reloadData()
+        self.hideActivityIndicator(currentIndicator: self.currentIndicator)
+    }
+    
     func fillingOutImageCells(){
         for apiPhoto in apiPhotos {
             let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
@@ -77,6 +100,18 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         collectionView.reloadData()
         self.hideActivityIndicator(currentIndicator: self.currentIndicator)
         collectionButton.isEnabled = true
+    }
+    
+    func createCollection() {
+        var count = 0
+        for apiPhoto in apiPhotos {
+            let pic = Pic(context: dataController.viewContext)
+            pic.index = Int16(count)
+            pic.url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
+            pic.pin = pin
+            try? dataController.viewContext.save()
+            count += 1
+        }
     }
     
     func displayActivityIndicator(currentIndicator: UIActivityIndicatorView) {
@@ -113,6 +148,7 @@ extension PhotoViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
+        removePicture(at: indexPath)
         colorCell(cell: cell!, alpha: 0.5)
     }
     
@@ -125,5 +161,16 @@ extension PhotoViewController: UICollectionViewDelegate {
         DispatchQueue.main.async {
             cell.contentView.alpha = alpha
         }
+    }
+    
+    func removePicture(at indexPath: IndexPath) {
+        for photo in photos {
+            if photo.index == indexPath.row {
+                dataController.viewContext.delete(photo)
+                try? dataController.viewContext.save()
+                photos.remove(at: indexPath.row)
+            }
+        }
+        collectionView.reloadData()
     }
 }

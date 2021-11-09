@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19461" systemVersion="21A559" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Pic" representedClassName="Pic" syncable="YES" codeGenerationType="class">
+        <attribute name="data" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES"/>
         <attribute name="index" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="url" optional="YES" attributeType="URI"/>
         <relationship name="pin" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Pin" inverseName="photos" inverseEntity="Pin"/>
@@ -13,7 +14,7 @@
         <relationship name="photos" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Pic" inverseName="pin" inverseEntity="Pic"/>
     </entity>
     <elements>
-        <element name="Pic" positionX="-11659.77734375" positionY="-1403.0390625" width="128" height="74"/>
+        <element name="Pic" positionX="-11659.77734375" positionY="-1403.0390625" width="128" height="89"/>
         <element name="Pin" positionX="-11943.26953125" positionY="-1625.38671875" width="128" height="118"/>
     </elements>
 </model>

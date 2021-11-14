@@ -18,7 +18,7 @@ class ServiceClient {
         
         var stringValue: String {
             switch self {
-            case .searchPhotos(let lat, let long): return Endpoints.baseUrl + "?method=flickr.photos.search&format=json&api_key=\(Endpoints.apiKey)&radius=10&lat=\(lat)&lon=\(long)&nojsoncallback=1&per_page=50"
+            case .searchPhotos(let lat, let long): return Endpoints.baseUrl + "?method=flickr.photos.search&format=json&api_key=\(Endpoints.apiKey)&radius=10&lat=\(lat)&lon=\(long)&nojsoncallback=1&per_page=\(Int.random(in: 1...20))"
             }
         }
         

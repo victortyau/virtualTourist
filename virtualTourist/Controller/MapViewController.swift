@@ -42,10 +42,10 @@ class MapViewController: UIViewController {
     }
     
     func addAnnotationToCoreData(coordinate: CLLocationCoordinate2D) {
-        let pin = Pin(context: dataController.viewContext)
+        let pin = Pin(context: DataController.shared.viewContext)
         pin.latitude = coordinate.latitude
         pin.longitude = coordinate.longitude
-        try? dataController.viewContext.save()
+        try? DataController.shared.viewContext.save()
         storedPins.append(pin)
     }
 }
@@ -55,14 +55,13 @@ extension MapViewController:  MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         let photoViewController = self.storyboard!.instantiateViewController(withIdentifier: "photoViewController") as! PhotoViewController
         photoViewController.coordinate = view.annotation?.coordinate
-        photoViewController.dataController = dataController
         self.navigationController!.pushViewController(photoViewController, animated: true)
     }
 }
 
 extension MapViewController: UIGestureRecognizerDelegate {
      
-    @IBAction func responseLongTapAction(_ sender: Any){
+    @IBAction func responseLongTapAction(_ sender: UIGestureRecognizer){
         if gestureStart {
             let gestureRecognizer = sender as! UILongPressGestureRecognizer
             let gestureTouchLocation = gestureRecognizer.location(in: mapView)

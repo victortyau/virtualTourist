@@ -17,7 +17,6 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     
     var currentIndicator: UIActivityIndicatorView!
     var coordinate: CLLocationCoordinate2D!
-    var dataController: DataController!
     var photos:[Pic] = []
     var apiPhotos:[Photo] = []
     var imageCells: [UIImage] = []
@@ -26,12 +25,10 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         currentIndicator = UIActivityIndicatorView (style: UIActivityIndicatorView.Style.medium)
         self.view.addSubview(currentIndicator)
         currentIndicator.bringSubviewToFront(self.view)
         currentIndicator.center = self.view.center
-        
         collectionView.allowsMultipleSelection = true
         collectionButton.isEnabled = false
         showMapPin()
@@ -42,16 +39,15 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     }
         
     @IBAction func createNewCollection(_ sender: Any) {
-        createCollection()
+        fetchDataApi()
     }
     
     func fetchData() {
-        
         let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
         let predicate = NSPredicate(format: "latitude = %@ && longitude = %@ ", argumentArray: [coordinate.latitude, coordinate.longitude])
         fetchRequest.predicate = predicate
         
-        if let result = try? dataController.viewContext.fetch(fetchRequest) {
+        if let result = try? DataController.shared.viewContext.fetch(fetchRequest) {
             pin = result.first
         }
         
@@ -59,7 +55,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         let predicate1 = NSPredicate(format: "pin == %@", pin)
         fetchRequest1.predicate = predicate1
 
-        if let result = try? dataController.viewContext.fetch(fetchRequest1) {
+        if let result = try? DataController.shared.viewContext.fetch(fetchRequest1) {
             photos = result
         }
         
@@ -89,6 +85,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         }
         collectionView.reloadData()
         self.hideActivityIndicator(currentIndicator: self.currentIndicator)
+        collectionButton.isEnabled = true
     }
     
     func fillingOutImageCells(){
@@ -100,16 +97,17 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         collectionView.reloadData()
         self.hideActivityIndicator(currentIndicator: self.currentIndicator)
         collectionButton.isEnabled = true
+        saveCoreData()
     }
     
-    func createCollection() {
+    func saveCoreData() {
         var count = 0
         for apiPhoto in apiPhotos {
-            let pic = Pic(context: dataController.viewContext)
+            let pic = Pic(context: DataController.shared.viewContext)
             pic.index = Int16(count)
             pic.url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
             pic.pin = pin
-            try? dataController.viewContext.save()
+            try? DataController.shared.viewContext.save()
             count += 1
         }
     }
@@ -166,8 +164,8 @@ extension PhotoViewController: UICollectionViewDelegate {
     func removePicture(at indexPath: IndexPath) {
         for photo in photos {
             if photo.index == indexPath.row {
-                dataController.viewContext.delete(photo)
-                try? dataController.viewContext.save()
+                DataController.shared.viewContext.delete(photo)
+                try? DataController.shared.viewContext.save()
                 photos.remove(at: indexPath.row)
             }
         }

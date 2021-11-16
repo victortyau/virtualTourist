@@ -39,6 +39,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     }
         
     @IBAction func createNewCollection(_ sender: Any) {
+        removeAllPicture()
         fetchDataApi()
     }
     
@@ -67,7 +68,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     }
     
     func fetchDataApi() {
-        ServiceClient.searchPhoto(lat: String(format: "%f",coordinate.latitude), long: String(format: "%f",coordinate.longitude)) {
+        ServiceClient.searchPhoto(lat: String(format: "%f",coordinate.latitude), long: String(format: "%f",coordinate.longitude),  page: String(format: "%d" ,Int.random(in: 1...20))) {
             photos, error in
             self.displayActivityIndicator(currentIndicator: self.currentIndicator)
             DispatchQueue.main.async {
@@ -98,6 +99,14 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         self.hideActivityIndicator(currentIndicator: self.currentIndicator)
         collectionButton.isEnabled = true
         saveCoreData()
+        
+        let fetchRequest1:NSFetchRequest<Pic> = Pic.fetchRequest()
+        let predicate1 = NSPredicate(format: "pin == %@", pin)
+        fetchRequest1.predicate = predicate1
+
+        if let result = try? DataController.shared.viewContext.fetch(fetchRequest1) {
+            photos = result
+        }
     }
     
     func saveCoreData() {
@@ -110,6 +119,16 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
             try? DataController.shared.viewContext.save()
             count += 1
         }
+    }
+    
+    func removeAllPicture() {
+        for photo in photos {
+            DataController.shared.viewContext.delete(photo)
+            try? DataController.shared.viewContext.save()
+        }
+        photos.removeAll()
+        imageCells.removeAll()
+        collectionView.reloadData()
     }
     
     func displayActivityIndicator(currentIndicator: UIActivityIndicatorView) {
@@ -146,7 +165,7 @@ extension PhotoViewController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let cell = collectionView.cellForItem(at: indexPath)
-        removePicture(at: indexPath)
+        removePictureCell(at: indexPath)
         colorCell(cell: cell!, alpha: 0.5)
     }
     
@@ -161,14 +180,13 @@ extension PhotoViewController: UICollectionViewDelegate {
         }
     }
     
-    func removePicture(at indexPath: IndexPath) {
-        for photo in photos {
-            if photo.index == indexPath.row {
-                DataController.shared.viewContext.delete(photo)
-                try? DataController.shared.viewContext.save()
-                photos.remove(at: indexPath.row)
-            }
-        }
+    func removePictureCell(at indexPath: IndexPath) {
+        let photo = photos[indexPath.row]
+        DataController.shared.viewContext.delete(photo)
+        try? DataController.shared.viewContext.save()
+        collectionView.deleteItems(at: [indexPath])
+        photos.remove(at: indexPath.row)
+        imageCells.remove(at: indexPath.row)
         collectionView.reloadData()
     }
 }

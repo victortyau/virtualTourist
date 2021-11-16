@@ -14,11 +14,11 @@ class ServiceClient {
         static let apiKey = "e2bdf455f99ac7216300a9cdaad57479"
         static let secretKey = "1296074b77ac4aba"
         
-        case searchPhotos(String, String)
+        case searchPhotos(String, String, String)
         
         var stringValue: String {
             switch self {
-            case .searchPhotos(let lat, let long): return Endpoints.baseUrl + "?method=flickr.photos.search&format=json&api_key=\(Endpoints.apiKey)&radius=10&lat=\(lat)&lon=\(long)&nojsoncallback=1&per_page=\(Int.random(in: 1...20))"
+            case .searchPhotos(let lat, let long, let page): return Endpoints.baseUrl + "?method=flickr.photos.search&format=json&api_key=\(Endpoints.apiKey)&radius=10&lat=\(lat)&lon=\(long)&nojsoncallback=1&per_page=\(page)"
             }
         }
         
@@ -27,8 +27,8 @@ class ServiceClient {
         }
     }
     
-    class func searchPhoto(lat: String, long: String, completion: @escaping ([Photo], Error?) -> Void) {
-        NetworkHelper.taskForGETRequest(url: Endpoints.searchPhotos(lat, long).url, responseType: Welcome.self) {
+    class func searchPhoto(lat: String, long: String, page: String,completion: @escaping ([Photo], Error?) -> Void) {
+        NetworkHelper.taskForGETRequest(url: Endpoints.searchPhotos(lat, long, page).url, responseType: Welcome.self) {
             response, error in
             
             if error != nil {

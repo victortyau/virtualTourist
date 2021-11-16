@@ -44,6 +44,19 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     }
     
     func fetchData() {
+       
+        fetchPin()
+        
+        fetchPics()
+
+        if photos.count == 0 {
+            fetchDataApi()
+        } else {
+            fetchAlbumData()
+        }
+    }
+    
+    func fetchPin() {
         let fetchRequest:NSFetchRequest<Pin> = Pin.fetchRequest()
         let predicate = NSPredicate(format: "latitude = %@ && longitude = %@ ", argumentArray: [coordinate.latitude, coordinate.longitude])
         fetchRequest.predicate = predicate
@@ -51,19 +64,15 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         if let result = try? DataController.shared.viewContext.fetch(fetchRequest) {
             pin = result.first
         }
-        
+    }
+    
+    func fetchPics() {
         let fetchRequest1:NSFetchRequest<Pic> = Pic.fetchRequest()
         let predicate1 = NSPredicate(format: "pin == %@", pin)
         fetchRequest1.predicate = predicate1
 
         if let result = try? DataController.shared.viewContext.fetch(fetchRequest1) {
             photos = result
-        }
-        
-        if photos.count == 0 {
-            fetchDataApi()
-        } else {
-            fetchAlbumData()
         }
     }
     
@@ -100,13 +109,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         collectionButton.isEnabled = true
         saveCoreData()
         
-        let fetchRequest1:NSFetchRequest<Pic> = Pic.fetchRequest()
-        let predicate1 = NSPredicate(format: "pin == %@", pin)
-        fetchRequest1.predicate = predicate1
-
-        if let result = try? DataController.shared.viewContext.fetch(fetchRequest1) {
-            photos = result
-        }
+        fetchPics()
     }
     
     func saveCoreData() {

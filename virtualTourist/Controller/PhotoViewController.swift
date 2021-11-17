@@ -90,8 +90,7 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     func fetchAlbumData() {
         self.displayActivityIndicator(currentIndicator: self.currentIndicator)
         for photo in photos {
-            let data = try? Data(contentsOf: photo.url!)
-            self.imageCells.append(UIImage(data: data!)!)
+            self.imageCells.append(UIImage(data: photo.data!)!)
         }
         collectionView.reloadData()
         self.hideActivityIndicator(currentIndicator: self.currentIndicator)
@@ -116,8 +115,10 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         var count = 0
         for apiPhoto in apiPhotos {
             let pic = Pic(context: DataController.shared.viewContext)
+            let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
             pic.index = Int16(count)
-            pic.url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
+            pic.url = url
+            pic.data = try? Data(contentsOf: url)
             pic.pin = pin
             try? DataController.shared.viewContext.save()
             count += 1

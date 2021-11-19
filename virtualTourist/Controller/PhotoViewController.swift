@@ -19,7 +19,6 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
     var coordinate: CLLocationCoordinate2D!
     var photos:[Pic] = []
     var apiPhotos:[Photo] = []
-    var imageCells: [UIImage] = []
     var pin: Pin!
     var pic: Pic!
     
@@ -48,12 +47,8 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
         fetchPin()
         
         fetchPics()
-
-        if photos.count == 0 {
-            fetchDataApi()
-        } else {
-            fetchAlbumData()
-        }
+        
+        collectionButton.isEnabled = true
     }
     
     func fetchPin() {
@@ -73,55 +68,39 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
 
         if let result = try? DataController.shared.viewContext.fetch(fetchRequest1) {
             photos = result
+            
+            if self.photos.count == 0 {
+                fetchDataApi()
+            }
+            
+            self.collectionView.reloadData()
         }
     }
     
     func fetchDataApi() {
         ServiceClient.searchPhoto(lat: String(format: "%f",coordinate.latitude), long: String(format: "%f",coordinate.longitude),  page: String(format: "%d" ,Int.random(in: 1...20))) {
             photos, error in
-            self.displayActivityIndicator(currentIndicator: self.currentIndicator)
-            DispatchQueue.main.async {
+            
+            if photos.count > 0 {
+                
                 self.apiPhotos = photos
-                self.fillingOutImageCells()
+                var count = 0
+                for apiPhoto in self.apiPhotos {
+                    
+                    let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
+                    
+                    let pic = Pic(context: DataController.shared.viewContext)
+                    pic.index = Int16(count)
+                    pic.url = url
+                    pic.pin = self.pin
+                    self.photos.append(pic)
+                    try? DataController.shared.viewContext.save()
+                    count += 1
+                    
+                }
+                
+                self.collectionView.reloadData()
             }
-        }
-    }
-    
-    func fetchAlbumData() {
-        self.displayActivityIndicator(currentIndicator: self.currentIndicator)
-        for photo in photos {
-            self.imageCells.append(UIImage(data: photo.data!)!)
-        }
-        collectionView.reloadData()
-        self.hideActivityIndicator(currentIndicator: self.currentIndicator)
-        collectionButton.isEnabled = true
-    }
-    
-    func fillingOutImageCells(){
-        for apiPhoto in apiPhotos {
-            let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
-            let data = try? Data(contentsOf: url)
-            self.imageCells.append(UIImage(data: data!)!)
-        }
-        collectionView.reloadData()
-        self.hideActivityIndicator(currentIndicator: self.currentIndicator)
-        collectionButton.isEnabled = true
-        saveCoreData()
-        
-        fetchPics()
-    }
-    
-    func saveCoreData() {
-        var count = 0
-        for apiPhoto in apiPhotos {
-            let pic = Pic(context: DataController.shared.viewContext)
-            let url = URL(string: "https://farm\(apiPhoto.farm).staticflickr.com/\(apiPhoto.server)/\(apiPhoto.id)_\(apiPhoto.secret)_q.jpg")!
-            pic.index = Int16(count)
-            pic.url = url
-            pic.data = try? Data(contentsOf: url)
-            pic.pin = pin
-            try? DataController.shared.viewContext.save()
-            count += 1
         }
     }
     
@@ -131,7 +110,6 @@ class PhotoViewController: UIViewController, UICollectionViewDataSource {
             try? DataController.shared.viewContext.save()
         }
         photos.removeAll()
-        imageCells.removeAll()
         collectionView.reloadData()
     }
     
@@ -157,13 +135,31 @@ extension PhotoViewController:  MKMapViewDelegate {
 
 extension PhotoViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return imageCells.count
+        return photos.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "grid_cell", for: indexPath) as! GridCellController
-        let photo = self.imageCells[(indexPath as NSIndexPath).row]
-        cell.villainImageView.image = photo
+        let photo = self.photos[(indexPath as NSIndexPath).row]
+        cell.activityIndicator.startAnimating()
+        
+        if photo.data != nil {
+            cell.villainImageView.image = UIImage(data: photo.data! as Data)
+            cell.activityIndicator.stopAnimating()
+        } else {
+            if let url = photo.url {
+                let data = try? Data(contentsOf: url)
+                photo.data = data
+                try? DataController.shared.viewContext.save()
+                
+                cell.villainImageView.image = UIImage(data: data! as Data)
+                
+                cell.activityIndicator.stopAnimating()
+            } else {
+                print("empty error")
+            }
+        }
+        
         return cell
     }
     
@@ -190,7 +186,6 @@ extension PhotoViewController: UICollectionViewDelegate {
         try? DataController.shared.viewContext.save()
         collectionView.deleteItems(at: [indexPath])
         photos.remove(at: indexPath.row)
-        imageCells.remove(at: indexPath.row)
         collectionView.reloadData()
     }
 }

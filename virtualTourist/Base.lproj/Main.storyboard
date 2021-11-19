@@ -82,10 +82,15 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="133" height="135"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 </imageView>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="J7P-ZA-UO4">
+                                                    <rect key="frame" x="56" y="57" width="20" height="20"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                         </collectionViewCellContentView>
                                         <size key="customSize" width="133" height="135"/>
                                         <connections>
+                                            <outlet property="activityIndicator" destination="J7P-ZA-UO4" id="RMp-6M-sEh"/>
                                             <outlet property="villainImageView" destination="K4n-wE-Orb" id="ccy-nD-Kub"/>
                                         </connections>
                                     </collectionViewCell>

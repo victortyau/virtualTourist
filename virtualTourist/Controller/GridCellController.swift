@@ -10,5 +10,6 @@ import UIKit
 class GridCellController: UICollectionViewCell {
     
     @IBOutlet weak var villainImageView: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
 }
